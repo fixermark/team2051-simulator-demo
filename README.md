@@ -20,7 +20,11 @@ stick motion into forward and back robot motion and left-and-right stick motion 
 5. As the simulator boots up, keep an eye out... You should see another dialog pop open at the top of Visual Studio Code to select
    your simulator. Select "halsim_gui.dll" (*note*: this is different on different OSes; see 
    [documentation](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/simulation-gui.html) for details).
+
+   ![Simulator selection menu](doc/select-simulator.png)
 6. After selecting your simulator, the Robot Simulation window will come up. Here, you can set up your simulator and test-drive the robot!
+
+   ![Simulator dashboard](doc/simulator-dashboard.png)
 
 ## Setting up the simulator
 
@@ -30,9 +34,14 @@ To bind a joystick to the inputs the robot expects:
 
 1. Under the "DS" menu (driver's station), select the "Joysticks" menu option to show the Joystick window. This lists all the things acting
    like joysticks for the robot. They will all be "Unassigned"
+   
+   ![The DS menu](doc/ds-menu.png)
+
 2. Under the same menu, select the "System Joystics" menu option to see a list of all the things plugged into your computer that could act like
    a joystick.
 3. To use a joystick, pick something in "System Joysticks" and click-and-drag it to Joystick[0] in the "Joysticks" window.
+
+   ![Assinging a system joystick to a joystick input](doc/select-a-joystick.png)
 4. If you picked a keyboard, you can change the keybindings by choosing "Keyboard (0, 1, 2, or 3) Settings" from the "DS" menu. By default,
    two joystick axes are bound to WS and AD, giving you WASD ("Doom-style") controls.
 
@@ -43,9 +52,13 @@ To see the robot on the "field":
 1. Under the "NetworkTables" menu, select "SmartDashboard > Field". 
 2. The robot starts in the bottom-left of the field, represented by the green arrow in a red box.
 
+   ![The robot on the field](doc/robot-field.png)
+
 ### Driving the robot
 
 The robot starts disabled, so it won't drive. To drive, select "Teleoperated" from the "Robot State" panel near the top-left.
+
+![The Robot State panel](doc/robot-state.png)
 
 Once enabled, you should be able to use the joystick to move the robot around the simulated field!
 

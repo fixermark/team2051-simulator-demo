@@ -10,6 +10,10 @@ public class Hardware {
     private final PWMVictorSPX m_leftMotor = new PWMVictorSPX(0);
     private final PWMVictorSPX m_rightMotor = new PWMVictorSPX(1);
 
+    public Hardware() {
+        m_rightMotor.setInverted(true);
+    }
+
     /**
      * Get the left motor
      * @return reference to left motor

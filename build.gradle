@@ -62,13 +62,13 @@ dependencies {
 
     // Websocket extensions require additional configuration.
     // simulation wpi.deps.sim.ws_server(wpi.platforms.desktop, false)
-    // simulation wpi.deps.sim.ws_client(wpi.platforms.desktop, false)
+    simulation wpi.deps.sim.ws_client(wpi.platforms.desktop, false)
 }
 
 // Simulation configuration (e.g. environment variables).
 sim {
     // Sets the websocket client remote host.
-    // envVar "HALSIMWS_HOST", "10.0.0.2"
+    envVar "HALSIMWS_HOST", "10.0.0.2"
 }
 
 test {

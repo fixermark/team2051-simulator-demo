@@ -26,6 +26,8 @@ public class Robot extends TimedRobot {
   private final Timer m_timer = new Timer();
   private Field2d m_field;
   private SimpleSimulatedChassis m_chassis;
+  private PoseEstimator m_pose = new PoseEstimator();
+  private boolean m_realDetermined = false;
 
   public Robot() {
     m_robotDrive = new DifferentialDrive(m_hardware.leftMotor(), m_hardware.rightMotor());
@@ -45,8 +47,26 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationInit() {
     m_field = new Field2d();
+
     SmartDashboard.putData("Field", m_field);
-    m_chassis = new SimpleSimulatedChassis();
+  }
+
+  /**
+   * Initializes the robot with information on whether it's simulated.
+   * 
+   * This is run from simulationPeriodic because the robot reads DIO to determine
+   * if it is real or simulated, and DIO isn't populated in robotInit or simulationInit
+   */
+  private void initWithSensors() {
+    if(m_hardware.isReal()) {
+      System.out.println("I'm a real boy!");
+    } else {
+      System.out.println("ARE YOU A SIMULATION, MORTY?!");
+      SimulatedEncoder left = new SimulatedEncoder();
+      SimulatedEncoder right = new SimulatedEncoder();
+      m_hardware.simulateEncoders(left, right);
+      m_chassis = new SimpleSimulatedChassis(m_hardware.gyro(), left, right);
+    } 
   }
 
   /**
@@ -54,11 +74,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void simulationPeriodic() {
+    if (!m_realDetermined) {
+      initWithSensors();
+      m_pose.initPose(m_hardware);
+      m_realDetermined = true;
+    }
+
+    if (m_chassis != null) {
+      m_chassis.updateSimulation(m_hardware.leftMotor(), m_hardware.rightMotor());
+    }
     /*
      * Simulate the robot's position based on the current motion
      */
-    m_chassis.updatePose(m_hardware.leftMotor(), m_hardware.rightMotor());
-    m_field.setRobotPose(m_chassis.getPose());
+    m_chassis.updateSimulation(m_hardware.leftMotor(), m_hardware.rightMotor());
+    m_pose.updatePose(m_hardware);
+    m_field.setRobotPose(m_pose.getPose());
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -81,7 +111,8 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+  }
 
   /** This function is called periodically during teleoperated mode. */
   @Override

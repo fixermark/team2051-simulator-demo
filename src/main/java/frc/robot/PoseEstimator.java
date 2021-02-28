@@ -60,7 +60,8 @@ public class PoseEstimator {
         m_lastRightEncoderValue = hardware.rightEncoderCount();
         
         double linear = ((double)(leftCount + rightCount)) / 2.0;
-        double rotation = hardware.gyro().getAngleZ() * Math.PI / 180.0;
+        // note flip in angle: gyro follows left-hand rule
+        double rotation = -hardware.gyro().getAngleZ() * Math.PI / 180.0;
 
         /* Now figure out how far the robot went this blip of time.
          * Linear is the distance, but the x- and y-axis distance is figured out by
@@ -71,10 +72,13 @@ public class PoseEstimator {
         double newX = DISTANCE_PER_TICK * linear * Math.cos(rotation) + m_pose.getX();
         double newY = DISTANCE_PER_TICK * linear * Math.sin(rotation) + m_pose.getY();
 
-        /* Create a new pose with thesee updated values */
+        /* Create a new pose with thesee updated values 
+         * Note: angle is flipped from right-hand rule; gets more negative as
+         * chassis rotates counter-clockwise
+         */
         m_pose = new Pose2d(
             new Translation2d(newX, newY), 
-            Rotation2d.fromDegrees(hardware.gyro().getAngleZ()));
+            Rotation2d.fromDegrees(-hardware.gyro().getAngleZ()));
     }
 
     /**

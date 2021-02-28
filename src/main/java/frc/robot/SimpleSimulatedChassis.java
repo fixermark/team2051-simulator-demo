@@ -107,7 +107,10 @@ public class SimpleSimulatedChassis {
         m_leftEncoder.set((int)m_leftEncoderValue);
         m_rightEncoder.set((int)m_rightEncoderValue);
 
-        /* Override read gyro value with simulated value */
-       m_gyro.simulateAngleZ(m_rotation * 360.0);
+        /* Override read gyro value with simulated value
+         * Note: angle on gyro is flipped from right-hand rule; counterclockwise
+         * chassis rotation makes angle more negative 
+         */
+       m_gyro.simulateAngleZ(m_rotation * -360.0);
     }
 }

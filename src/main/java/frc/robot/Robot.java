@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
   private SimpleSimulatedChassis m_chassis;
   private PoseEstimator m_pose = new PoseEstimator();
   private boolean m_realDetermined = false;
+  private double m_startupDebounce = 0;
 
   public Robot() {
     m_robotDrive = new DifferentialDrive(m_hardware.leftMotor(), m_hardware.rightMotor());
@@ -39,6 +40,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    m_startupDebounce = Timer.getFPGATimestamp();
   }
 
   /**
@@ -74,6 +76,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void simulationPeriodic() {
+    // Give the "real boy" pin a chance to be read
+    if (Timer.getFPGATimestamp() - m_startupDebounce < 0.25) {
+      return;
+    }
     if (!m_realDetermined) {
       initWithSensors();
       m_pose.initPose(m_hardware);
@@ -86,7 +92,6 @@ public class Robot extends TimedRobot {
     /*
      * Simulate the robot's position based on the current motion
      */
-    m_chassis.updateSimulation(m_hardware.leftMotor(), m_hardware.rightMotor());
     m_pose.updatePose(m_hardware);
     m_field.setRobotPose(m_pose.getPose());
   }

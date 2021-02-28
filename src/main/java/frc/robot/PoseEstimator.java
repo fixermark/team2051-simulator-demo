@@ -5,6 +5,9 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 
+/**
+ * Estimates robot's x, y, and rotational pose on the field from encoder and gyro values
+ */
 public class PoseEstimator {
     private double m_lastUpdateTime;
     private int m_lastLeftEncoderValue;

@@ -67,11 +67,14 @@ Once enabled, you should be able to use the joystick to move the robot around th
 The Romi is unusual in that it operates via the simulator, so WPILib always considers the Romi
 "simulated" (see https://www.chiefdelphi.com/t/romi-always-reports-robotbase-isreal-false/391820/2
 for details). To address this, we can use sensors on board the robot to determine whether it is 
-real or simulated. By setting the EXT0 pin to "DIO" (default setting on an out-of-the-box Romi) and
-bridging the EXT0 sensor pin to ground, we create a closed switch that is open in the simulation,
+real or simulated. We set the EXT0 pin to "DIO" (default setting on an out-of-the-box Romi).
+
+![Setting EXT0 to "DIO"](doc/romi-ext-io.png)
+
+By then bridging the EXT0 sensor pin to ground, we create a closed switch that is open in the simulation,
 so the code can tell if the robot is real.
 
-![Giving the robot a "real hardware" sensor](doc/romi-ext-io.png)
+![Bridging the pin to close the "switch"](doc/romi-pin-bridge.png)
 
 With this pin bridged, the Romi will use the encoder and gyro values from the robot chassis
 to drive the Field display instead of the internally-generated simulation.

@@ -61,9 +61,9 @@ public class Robot extends TimedRobot {
    */
   private void initWithSensors() {
     if(m_hardware.isReal()) {
-      System.out.println("I'm a real boy!");
+      System.out.println("Robot believes it is talking to real hardware");
     } else {
-      System.out.println("ARE YOU A SIMULATION, MORTY?!");
+      System.out.println("Robot believes it is simulated");
       SimulatedEncoder left = new SimulatedEncoder();
       SimulatedEncoder right = new SimulatedEncoder();
       m_hardware.simulateEncoders(left, right);

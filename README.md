@@ -12,8 +12,8 @@ stick motion into forward and back robot motion and left-and-right stick motion 
 *note*: Directions given for Windows, but should work similarly on other OSs (substitute relevant keys, like command for ctrl).
 
 1. Install the correct version of WPILib for your system from [here](https://github.com/wpilibsuite/allwpilib/releases). Details of the install process are
-   [here](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html). *At the end, you should have a copy of Visual Studio Code set
-   up with the WPILib directories.
+   [here](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html). 
+   * At the end, you should have a copy of Visual Studio Code set up with the WPILib directories.
 2. Clone this Git repository
 3. Run Visual Studio Code, and navigate to the directory you cloned (Ctrl-K O to open the directory navigator).
 4. Once Visual Studio Code opens, run the simulator by hitting Ctrl-Shift-P and selecting the option "WPILib: Simulate Robot Code on Desktop"
@@ -62,6 +62,20 @@ The robot starts disabled, so it won't drive. To drive, select "Teleoperated" fr
 
 Once enabled, you should be able to use the joystick to move the robot around the simulated field!
 
+### Using with a real robot
+
+The Romi is unusual in that it operates via the simulator, so WPILib always considers the Romi
+"simulated" (see https://www.chiefdelphi.com/t/romi-always-reports-robotbase-isreal-false/391820/2
+for details). To address this, we can use sensors on board the robot to determine whether it is 
+real or simulated. By setting the EXT0 pin to "DIO" (default setting on an out-of-the-box Romi) and
+bridging the EXT0 sensor pin to ground, we create a closed switch that is open in the simulation,
+so the code can tell if the robot is real.
+
+![Giving the robot a "real hardware" sensor](doc/romi-ext-io.png)
+
+With this pin bridged, the Romi will use the encoder and gyro values from the robot chassis
+to drive the Field display instead of the internally-generated simulation.
+
 ## Follow-up work
 
 * It is possible to load an image for both the field and the robot and some field parameters into the display 
@@ -77,12 +91,12 @@ simulator dashboard via NetworkTables. The simulator has these parts (wired toge
 
 * `Field2d m_field`: The field representation. This takes in `Pose2d` descriptions of the robot position and rotation and ships
   them to the dashboard via NetworkTables.
-* `SimpleSimulatedChassis m_chassis`: A little widget that keeps track of an imaginary position and rotation for the robot on the field.
+* `SimpleSimulatedChassis m_chassis`: A little widget that keeps track of imaginary encoder and gyro values for the robot on the field.
+* `PoseEstimator m_pose`: An estimator for position on the field that extrapolates from wheel
+   encoder changes and the gyro value (simulated or real values).
 
-These are set up in `simulationInit`, which is only run when the robot code is in simulation mode (so should be ignored
-if the code runs on the real robot). Another method that only runs in simulation, `simulationPeriodic`, gets called
-frequently. In here, we do two things:
+These are set up in `initWithSensors`, which is eventually run from `simulationPeriodic` after a quarter-second delay (giving the Romi a bit of time to detect whether EXT0 is bridged to ground). Another method, `simulationPeriodic`, gets called frequently. In here, we do three things:
 
-1. Call `m_chassis.updatePose` on the chassis, giving it the leftMotor and rightMotor so it knows how the robot's position should be changing.
-   `updatePose` changes the robot position and rotation based on the motor commands.
-2. Call `m_field.setRobotPose`, which communicates the new pose back to the dashboard.
+1. If we set up a simulated chassis, call `m_chassis.updateSimulation` on the chassis, giving it the leftMotor and rightMotor so it knows how the robot's position should be changing.
+2. Update the robot pose estimate via the gyro and encoder values.
+3. Call `m_field.setRobotPose`, which communicates the new pose back to the dashboard.

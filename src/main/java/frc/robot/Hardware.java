@@ -11,6 +11,17 @@ import frc.robot.sensors.RomiGyro;
  * Abstraction class to hold references to all the robot's hardware (sensors, speed controllers, inputs)
  */
 public class Hardware {
+    /**
+     * Number of encoder counts per full wheel revolution
+     */
+    public static final double ENCODER_TICKS_PER_REVOLUTION = 1440.0;
+
+    /**
+     * Circumference of wheel in meters
+     */
+    public static final double WHEEL_CIRCUMFERENCE_METERS = 0.07 * Math.PI;
+
+
     private final PWMVictorSPX m_leftMotor = new PWMVictorSPX(0);
     private final PWMVictorSPX m_rightMotor = new PWMVictorSPX(1);
     private final DigitalInput m_realRobot = new DigitalInput(8);
@@ -62,6 +73,7 @@ public class Hardware {
     public void simulateEncoders(CounterBase leftEncoder, CounterBase rightEncoder) {
         m_leftEncoder = leftEncoder;
         m_rightEncoder = rightEncoder;
+        m_rightMotor.setInverted(false);
     }
 
     /**

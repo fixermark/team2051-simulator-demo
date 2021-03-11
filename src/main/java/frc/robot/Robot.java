@@ -5,13 +5,14 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PWMVictorSPX;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.Drive;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,7 +24,6 @@ public class Robot extends TimedRobot {
   private final Hardware m_hardware = new Hardware();
   private DifferentialDrive m_robotDrive;
   private final Joystick m_stick = new Joystick(0);
-  private final Timer m_timer = new Timer();
   private Field2d m_field;
   private SimpleSimulatedChassis m_chassis;
   private PoseEstimator m_pose = new PoseEstimator();
@@ -99,24 +99,22 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    m_timer.reset();
-    m_timer.start();
+    SequentialCommandGroup commands =  new SequentialCommandGroup(
+      new Drive(m_hardware, m_robotDrive, 1),
+      new Drive(m_hardware, m_robotDrive, -1));
+    CommandScheduler.getInstance().schedule(commands);
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    // Drive for 2 seconds
-    if (m_timer.get() < 2.0) {
-      m_robotDrive.arcadeDrive(0.5, 0.0); // drive forwards half speed
-    } else {
-      m_robotDrive.stopMotor(); // stop robot
-    }
+    CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
   public void teleopInit() {
+    CommandScheduler.getInstance().cancelAll();
   }
 
   /** This function is called periodically during teleoperated mode. */

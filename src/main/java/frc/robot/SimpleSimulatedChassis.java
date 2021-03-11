@@ -103,6 +103,7 @@ public class SimpleSimulatedChassis {
             m_rotation += 1.0;
         }
 
+
         /* Override encoders wtih simulated value */
         m_leftEncoder.set((int)m_leftEncoderValue);
         m_rightEncoder.set((int)m_rightEncoderValue);

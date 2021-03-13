@@ -1,6 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
@@ -9,7 +8,6 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
  * Estimates robot's x, y, and rotational pose on the field from encoder and gyro values
  */
 public class PoseEstimator {
-    private double m_lastUpdateTime;
     private int m_lastLeftEncoderValue;
     private int m_lastRightEncoderValue;
     private Pose2d m_pose = new Pose2d();
@@ -34,7 +32,6 @@ public class PoseEstimator {
      * @param hardware Hardware on which to estimate pose
      */
     public void initPose(Hardware hardware) {
-        m_lastUpdateTime = Timer.getFPGATimestamp();
         m_lastLeftEncoderValue = hardware.leftEncoderCount();
         m_lastRightEncoderValue = hardware.rightEncoderCount();
     }
@@ -45,14 +42,6 @@ public class PoseEstimator {
      * @param rightMotor Output to right motor
      */
     public void updatePose(Hardware hardware) {
-        /* Compute a delta and update m_lastUpdateTime. The delta makes the simulation
-         * realtime-independent (i.e. if the robot runs slower or faster, we should
-         * get close to the same answers).
-         */
-        double newTimestamp = Timer.getFPGATimestamp();
-        double delta = newTimestamp - m_lastUpdateTime;
-        m_lastUpdateTime = newTimestamp;
-
         /* Very simplified physics model used below:
          * We assume forward motion is just average of motion of both wheels.
          */ 

@@ -89,19 +89,9 @@ public class SimpleSimulatedChassis {
 
         /* Rotation is just scaling the max speed by how fast we're turning,
          * multiplying the result by delta to scale by the faction of time passed, and
-         * adding it to the current rotation...
+         * adding it to the current rotation
          */
         m_rotation += ROTATIONS_PER_SECOND * turn * delta;
-        /* ... but since we don't care about tracking count of rotations, only how many
-         * degrees of rotation we have, remove whole chunks of rotation if we're over 
-         * the limit or add chunks if we're under the limit.
-         */
-        while (m_rotation >= 0.5) {
-            m_rotation -= 1.0;
-        }
-        while (m_rotation < -0.5) {
-            m_rotation += 1.0;
-        }
 
         /* Override encoders wtih simulated value */
         m_leftEncoder.set((int)m_leftEncoderValue);

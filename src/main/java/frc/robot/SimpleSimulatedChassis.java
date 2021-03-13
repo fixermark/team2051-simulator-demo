@@ -60,6 +60,13 @@ public class SimpleSimulatedChassis {
      * @param rightMotor Output to right motor
      */
     public void updateSimulation(SpeedController leftMotor, SpeedController rightMotor) {
+        /* Get the power commands sent to the right and left motors.
+         * On the ROMI chassis, the right motor is flipped, so invert that input.
+         */
+        double leftPower = leftMotor.get();
+        double rightPower = -rightMotor.get();
+
+
         /* Compute a delta and update m_lastUpdateTime. The delta makes the simulation
          * realtime-independent (i.e. if the robot runs slower or faster, we should
          * get close to the same answers).
@@ -77,15 +84,18 @@ public class SimpleSimulatedChassis {
          * skid) that we don't model here, but this is a good start.
          */ 
         // calculate so that right-motor-forward translates to counterclockwise (positive radians) motion
-        double turn = (rightMotor.get() - leftMotor.get()) / 2;
+        double turn = (rightPower - leftPower) / 2;
 
         /* Now figure out how far the robot went this blip of time.
          * We'll pretend wheel motion scales completely linearly to speed controller
          * input. We multiply by delta to scale the whole computation by the fraction of
          * time that has passed, then add to previous encoder values.
+         * 
+         * Note: negative power applied to the right motor spins the encoder in the positive
+         * direction, so we flip the power value here
          */
-        m_leftEncoderValue += TICKS_PER_SECOND * leftMotor.get() * delta;
-        m_rightEncoderValue += TICKS_PER_SECOND * rightMotor.get() * delta;
+        m_leftEncoderValue += TICKS_PER_SECOND * leftPower * delta;
+        m_rightEncoderValue += TICKS_PER_SECOND * rightPower * delta;
 
         /* Rotation is just scaling the max speed by how fast we're turning,
          * multiplying the result by delta to scale by the faction of time passed, and

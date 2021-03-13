@@ -30,7 +30,6 @@ public class Hardware {
     private CounterBase m_rightEncoder = new Encoder(6,7);
 
     public Hardware() {
-        m_rightMotor.setInverted(true);
     }
 
     /**
@@ -73,7 +72,6 @@ public class Hardware {
     public void simulateEncoders(CounterBase leftEncoder, CounterBase rightEncoder) {
         m_leftEncoder = leftEncoder;
         m_rightEncoder = rightEncoder;
-        m_rightMotor.setInverted(false);
     }
 
     /**

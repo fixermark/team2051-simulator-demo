@@ -18,6 +18,7 @@ public class Drive extends CommandBase {
     /**
      * Create a command
      * @param hardware The hardware to build
+     * @param drive Differential drive to control on the robot
      * @param distance The total distance to go, in meters
      */
     public Drive(Hardware hardware, DifferentialDrive drive, double distance) {
@@ -28,7 +29,6 @@ public class Drive extends CommandBase {
     }
 
     @Override public void initialize() {
-        System.out.println("init!");
         m_targetLeftEncoder = m_hardware.leftEncoderCount() + distanceToEncoderCounts(m_distance);
         m_targetRightEncoder = m_hardware.rightEncoderCount() + distanceToEncoderCounts(m_distance);
     }
@@ -44,7 +44,7 @@ public class Drive extends CommandBase {
 
         double leftSpeed = travelDone(leftEncoder, m_targetLeftEncoder) ? 0 : speed;
         double rightSpeed = travelDone(rightEncoder, m_targetRightEncoder) ? 0 : speed;
-        m_drive.tankDrive(leftSpeed, -rightSpeed);
+        m_drive.tankDrive(leftSpeed, rightSpeed);
     }
 
     @Override public void end(boolean interrupt) {

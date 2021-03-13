@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Drive;
+import frc.robot.commands.Turn;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotDrive = new DifferentialDrive(m_hardware.leftMotor(), m_hardware.rightMotor());
+    m_robotDrive.setRightSideInverted(false);
   }
 
   /**
@@ -99,9 +101,17 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
+    double distanceMeters = 0.5;
     SequentialCommandGroup commands =  new SequentialCommandGroup(
-      new Drive(m_hardware, m_robotDrive, 1),
-      new Drive(m_hardware, m_robotDrive, -1));
+      new Drive(m_hardware, m_robotDrive, distanceMeters),
+      new Turn(m_hardware, m_robotDrive, 90),
+      new Drive(m_hardware, m_robotDrive, distanceMeters),
+      new Turn(m_hardware, m_robotDrive, 90),
+      new Drive(m_hardware, m_robotDrive, distanceMeters),
+      new Turn(m_hardware, m_robotDrive, 90),
+      new Drive(m_hardware, m_robotDrive, distanceMeters),
+      new Turn(m_hardware, m_robotDrive, 90)
+      );
     CommandScheduler.getInstance().schedule(commands);
   }
 
@@ -120,7 +130,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    m_robotDrive.arcadeDrive(m_stick.getX(), -m_stick.getY());
+    m_robotDrive.arcadeDrive(-m_stick.getY(), m_stick.getX());
   }
 
   /** This function is called once each time the robot enters test mode. */

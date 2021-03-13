@@ -25,13 +25,11 @@ public class Turn extends CommandBase {
     }
 
     @Override public void initialize() {
-        System.out.println("turn init");
         m_targetAngle = m_hardware.gyro().getAngleZ() + m_angle;
     }
 
     @Override public void execute() {
-        System.out.println("Turning");
-        double speed = 1.0;
+        double speed = 0.35;
         if (m_turningRight) {
             m_drive.tankDrive(speed, -speed);
         } else {

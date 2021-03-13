@@ -64,6 +64,8 @@ public class Robot extends TimedRobot {
   private void initWithSensors() {
     if(m_hardware.isReal()) {
       System.out.println("Robot believes it is talking to real hardware");
+      // in real hardware, one motor is reversed
+      m_robotDrive.setRightSideInverted(true);
     } else {
       System.out.println("Robot believes it is simulated");
       SimulatedEncoder left = new SimulatedEncoder();

@@ -37,10 +37,7 @@ public class Drive extends CommandBase {
         int leftEncoder = m_hardware.leftEncoderCount();
         int rightEncoder = m_hardware.rightEncoderCount();
 
-        System.out.println("TargetL: " + m_targetLeftEncoder + " Left: " + leftEncoder +
-        " TargetR: " + m_targetRightEncoder + " Right: " + rightEncoder);
-
-        double speed = m_drivingForward ? 1.0 : -1.0;
+        double speed = m_drivingForward ? 0.5 : -0.5;
 
         double leftSpeed = travelDone(leftEncoder, m_targetLeftEncoder) ? 0 : speed;
         double rightSpeed = travelDone(rightEncoder, m_targetRightEncoder) ? 0 : speed;

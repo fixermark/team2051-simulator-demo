@@ -60,8 +60,9 @@ public class SimpleSimulatedChassis {
      * @param rightMotor Output to right motor
      */
     public void updateSimulation(SpeedController leftMotor, SpeedController rightMotor) {
-        /* Get the power commands sent to the right and left motors.
-         * On the ROMI chassis, the right motor is flipped, so invert that input.
+        /* Get the power commands sent to the right and left motors to drive the robot forward.
+         * On the ROMI chassis, the right motor is flipped (i.e. positive power values drive the
+         * robot backward), so invert that input.
          */
         double leftPower = leftMotor.get();
         double rightPower = -rightMotor.get();

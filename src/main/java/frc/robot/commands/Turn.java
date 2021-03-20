@@ -9,10 +9,16 @@ public class Turn extends CommandBase {
     private Hardware m_hardware;
     private DifferentialDrive m_drive;
     private double m_angle;
-    private PIDController m_controller = new PIDController(0.1, 0.001, -.001);
+    // (0.006, 0.016, 0.0011
+    // .02, 0, 0.001
+    // 0.8: .01, .025, 0.004
+    // 0.6: 0.04,0.0112,0.003
 
-    private static final double MAX_SPEED = 1.0;
-    private static final double TOLERANCE = 0.5;
+    private PIDController m_controller;
+
+    private static final double MAX_SPEED = 0.5;
+    private static final double POSITION_TOLERANCE = 1;
+    private static final double CHANGE_TOLERANCE = 1;
 
     /**
      * Create the command
@@ -24,7 +30,8 @@ public class Turn extends CommandBase {
         m_hardware = hardware;
         m_drive = drive;
         m_angle = angle;
-        m_controller.setTolerance(TOLERANCE);
+        m_controller = new PIDController(0.03,0.0002,0.003);
+        m_controller.setTolerance(POSITION_TOLERANCE, CHANGE_TOLERANCE);
     }
 
     @Override public void initialize() {
@@ -37,6 +44,9 @@ public class Turn extends CommandBase {
         double clampedOutput = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, output));
         // positive rotations are clockwise, so should turn to the right
         m_drive.tankDrive(clampedOutput, -clampedOutput);
+        System.out.println("Target: " + m_controller.getSetpoint() + 
+        " error: " + (m_controller.getSetpoint() - m_hardware.gyro().getAngleZ()) + 
+        " value: " + output);
     }
 
     @Override public void end(boolean interrupt) {

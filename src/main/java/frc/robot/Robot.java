@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Turn;
+import frc.robot.commands.Wait;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -42,6 +43,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_startupDebounce = Timer.getFPGATimestamp();
+  }
+
+  @Override
+  public void disabledInit() {
+    CommandScheduler.getInstance().cancelAll();
   }
 
   /**
@@ -100,15 +106,14 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    double distanceMeters = 0.1524;  // <- about 6 inches
+    // double distanceMeters = 0.1524;  // <- about 6 inches
     SequentialCommandGroup commands =  new SequentialCommandGroup(
-      new Drive(m_hardware, m_robotDrive, distanceMeters),
       new Turn(m_hardware, m_robotDrive, 90),
-      new Drive(m_hardware, m_robotDrive, distanceMeters),
+      new Wait(0.75),
       new Turn(m_hardware, m_robotDrive, 90),
-      new Drive(m_hardware, m_robotDrive, distanceMeters),
+      new Wait(0.75),
       new Turn(m_hardware, m_robotDrive, 90),
-      new Drive(m_hardware, m_robotDrive, distanceMeters),
+      new Wait(0.75),
       new Turn(m_hardware, m_robotDrive, 90)
       );
     CommandScheduler.getInstance().schedule(commands);

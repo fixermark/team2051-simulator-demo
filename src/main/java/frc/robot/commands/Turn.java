@@ -1,7 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Hardware;
 
@@ -9,16 +11,18 @@ public class Turn extends CommandBase {
     private Hardware m_hardware;
     private DifferentialDrive m_drive;
     private double m_angle;
-    // (0.006, 0.016, 0.0011
-    // .02, 0, 0.001
-    // 0.8: .01, .025, 0.004
-    // 0.6: 0.04,0.0112,0.003
 
     private PIDController m_controller;
+    private TrapezoidProfile m_profile;
+    private double m_startTime;
+    private double m_completionTime;
 
-    private static final double MAX_SPEED = 0.5;
-    private static final double POSITION_TOLERANCE = 1;
-    private static final double CHANGE_TOLERANCE = 1;
+    // max speed in degrees / sec
+    private static final double MAX_SPEED = 360.0;
+    // max acceleration in degrees / sec^2
+    private static final double MAX_ACCELERATION = 180.0;
+    // When we reach the end of our trajectory, give a bit of time to let the PID control settle
+    private static final double TIME_COMPLETION_SLOP = 0.25;
 
     /**
      * Create the command
@@ -30,20 +34,36 @@ public class Turn extends CommandBase {
         m_hardware = hardware;
         m_drive = drive;
         m_angle = angle;
-        m_controller = new PIDController(0.03,0.0002,0.003);
-        m_controller.setTolerance(POSITION_TOLERANCE, CHANGE_TOLERANCE);
     }
 
     @Override public void initialize() {
-        m_controller.reset();
-        m_controller.setSetpoint(m_hardware.gyro().getAngleZ() + m_angle);
+
+        double currentGyroZ = m_hardware.gyro().getAngleZ();
+        double targetGyroZ = currentGyroZ + m_angle;
+        // P, I, D value experimentally determined with 90-degree turns
+        m_controller = new PIDController(0.011, 
+        0.0, 
+        0.0);
+
+        m_profile = new TrapezoidProfile(
+            new TrapezoidProfile.Constraints(MAX_SPEED, MAX_ACCELERATION),
+            new TrapezoidProfile.State(targetGyroZ, 0),
+            new TrapezoidProfile.State(currentGyroZ, 0));
+
+        
+        m_startTime = Timer.getFPGATimestamp();
+        m_completionTime = m_startTime + m_profile.totalTime() + TIME_COMPLETION_SLOP;
+
+        System.out.println("--- Going from " + currentGyroZ + " to " + targetGyroZ + " in " + m_profile.totalTime() + " seconds.");
     }
 
     @Override public void execute() {
+        // Update the profile, then update the PID controller setpoint with where the profile says we should be
+        m_controller.setSetpoint(m_profile.calculate(Timer.getFPGATimestamp() - m_startTime).position);
+        // Now, what should the motors do to make the current position match the setpoint?
         double output = m_controller.calculate(m_hardware.gyro().getAngleZ());
-        double clampedOutput = Math.max(-MAX_SPEED, Math.min(MAX_SPEED, output));
         // positive rotations are clockwise, so should turn to the right
-        m_drive.tankDrive(clampedOutput, -clampedOutput);
+        m_drive.tankDrive(output, -output);
         System.out.println("Target: " + m_controller.getSetpoint() + 
         " error: " + (m_controller.getSetpoint() - m_hardware.gyro().getAngleZ()) + 
         " value: " + output);
@@ -54,6 +74,6 @@ public class Turn extends CommandBase {
     }
 
     @Override public boolean isFinished() {
-        return m_controller.atSetpoint();
+        return Timer.getFPGATimestamp() > m_completionTime;
     }
 }

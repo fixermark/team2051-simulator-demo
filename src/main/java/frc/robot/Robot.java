@@ -106,14 +106,15 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    // double distanceMeters = 0.1524;  // <- about 6 inches
+    double distanceMeters = 0.1524;  // <- about 6 inches
     SequentialCommandGroup commands =  new SequentialCommandGroup(
+      new Drive(m_hardware, m_robotDrive, distanceMeters),
       new Turn(m_hardware, m_robotDrive, 90),
-      new Wait(0.75),
+      new Drive(m_hardware, m_robotDrive, distanceMeters),
       new Turn(m_hardware, m_robotDrive, 90),
-      new Wait(0.75),
+      new Drive(m_hardware, m_robotDrive, distanceMeters),
       new Turn(m_hardware, m_robotDrive, 90),
-      new Wait(0.75),
+      new Drive(m_hardware, m_robotDrive, distanceMeters),
       new Turn(m_hardware, m_robotDrive, 90)
       );
     CommandScheduler.getInstance().schedule(commands);

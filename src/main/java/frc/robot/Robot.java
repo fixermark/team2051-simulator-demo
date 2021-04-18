@@ -78,6 +78,11 @@ public class Robot extends TimedRobot {
     } 
   }
 
+  /** For convenience, inches-to-meters conversion */
+  private double inches(double inches) {
+    return inches * 0.0254 ;  
+  }
+
   /**
    * Update the simulation
    */
@@ -106,16 +111,33 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    double distanceMeters = 0.1524;  // <- about 6 inches
+    double startDistance = 60;
+    double startToOne = 150;
+    double starToStar = 120;
+    double passFirstStar = 60;
+    double starToMiddle = 60;
+    double backHome = 220;
+
+    double passStar = 65;
+    double turnDegrees = 105;
     SequentialCommandGroup commands =  new SequentialCommandGroup(
-      new Drive(m_hardware, m_robotDrive, distanceMeters),
-      new Turn(m_hardware, m_robotDrive, 90),
-      new Drive(m_hardware, m_robotDrive, distanceMeters),
-      new Turn(m_hardware, m_robotDrive, 90),
-      new Drive(m_hardware, m_robotDrive, distanceMeters),
-      new Turn(m_hardware, m_robotDrive, 90),
-      new Drive(m_hardware, m_robotDrive, distanceMeters),
-      new Turn(m_hardware, m_robotDrive, 90)
+      new Drive(m_hardware, m_robotDrive, inches(startDistance)),
+      new Turn(m_hardware, m_robotDrive, -turnDegrees),
+      new Drive(m_hardware, m_robotDrive, inches(startToOne)),
+      new Turn(m_hardware, m_robotDrive, turnDegrees),
+      new Drive(m_hardware, m_robotDrive, inches(passFirstStar)),
+      new Turn(m_hardware, m_robotDrive, turnDegrees),
+      new Drive(m_hardware, m_robotDrive, inches(starToStar)),
+      new Turn(m_hardware, m_robotDrive, -turnDegrees),
+      new Drive(m_hardware, m_robotDrive, inches(passStar)),
+      new Turn(m_hardware, m_robotDrive, -turnDegrees),
+      new Drive(m_hardware, m_robotDrive, inches(starToStar)),
+      new Turn(m_hardware, m_robotDrive, turnDegrees),
+      new Drive(m_hardware, m_robotDrive, inches(passStar)),
+      new Turn(m_hardware, m_robotDrive, turnDegrees),
+      new Drive(m_hardware, m_robotDrive, inches(starToMiddle)),
+      new Turn(m_hardware, m_robotDrive, turnDegrees),
+      new Drive(m_hardware, m_robotDrive, inches(backHome))
       );
     CommandScheduler.getInstance().schedule(commands);
   }

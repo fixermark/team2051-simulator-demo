@@ -15,6 +15,8 @@ public class Drive extends CommandBase {
     private int m_targetRightEncoder;
     private boolean m_drivingForward;
 
+    private static final double MAX_SPEED = 0.7;
+
     /**
      * Create a command
      * @param hardware The hardware to build
@@ -37,7 +39,7 @@ public class Drive extends CommandBase {
         int leftEncoder = m_hardware.leftEncoderCount();
         int rightEncoder = m_hardware.rightEncoderCount();
 
-        double speed = m_drivingForward ? 0.5 : -0.5;
+        double speed = m_drivingForward ? MAX_SPEED : -MAX_SPEED;
 
         double leftSpeed = travelDone(leftEncoder, m_targetLeftEncoder) ? 0 : speed;
         double rightSpeed = travelDone(rightEncoder, m_targetRightEncoder) ? 0 : speed;

@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.sensors.RomiGyro;
 
+
+
 /**
  * A simulation of the robot's chassis, converting input drive voltages to
  * changes to a robot pose
@@ -15,6 +17,8 @@ public class SimpleSimulatedChassis {
     private double m_leftEncoderValue = 0;
     private double m_rightEncoderValue = 0;
     private double m_rotation = 0;
+
+
 
     /**
      * Speed at which robot drives forward in meters per second at max velocity
@@ -52,6 +56,19 @@ public class SimpleSimulatedChassis {
         m_leftEncoder = leftEncoder;
         m_rightEncoder = rightEncoder;
         m_lastUpdateTime = Timer.getFPGATimestamp();
+
+       /*
+        double newX = 16;
+        double newY = 8;
+
+        newX=Math.max( 0, newX);
+        newX=Math.min(16.4846, newX);
+        newY=Math.max( 0, newY);
+        newY=Math.min(8.1026, newY);
+        */
+        //tried to add borders to the field
+        
+
     }
 
     /**

@@ -71,6 +71,13 @@ public class PoseEstimator {
         m_pose = new Pose2d(
             new Translation2d(newX, newY), 
             Rotation2d.fromDegrees(-hardware.gyro().getAngleZ()));
+/*
+        newX=Math.max( 0, newX);
+        newX=Math.min(16.4846, newX);
+        newY=Math.max( 0, newY);
+        newY=Math.min(8.1026, newY);
+        //tried to add field border here as well
+        */
     }
 
     /**

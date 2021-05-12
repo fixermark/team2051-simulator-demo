@@ -68,9 +68,18 @@ public class PoseEstimator {
          * Note: angle is flipped from right-hand rule; gets more negative as
          * chassis rotates counter-clockwise
          */
+        newX=Math.max( 0, newX);
+        newX=Math.min(16.4846, newX);
+        newY=Math.max( 0, newY);
+        newY=Math.min(8.1026, newY);
+        
         m_pose = new Pose2d(
             new Translation2d(newX, newY), 
             Rotation2d.fromDegrees(-hardware.gyro().getAngleZ()));
+
+        
+        //tried to add field border here as well
+        
     }
 
     /**

@@ -120,6 +120,7 @@ public class Robot extends TimedRobot {
 
     double passStar = 65;
     double turnDegrees = 105;
+    //not sure about why it's not 90
     SequentialCommandGroup commands =  new SequentialCommandGroup(
       new Drive(m_hardware, m_robotDrive, inches(startDistance)),
       new Turn(m_hardware, m_robotDrive, -turnDegrees),
@@ -137,8 +138,12 @@ public class Robot extends TimedRobot {
       new Turn(m_hardware, m_robotDrive, turnDegrees),
       new Drive(m_hardware, m_robotDrive, inches(starToMiddle)),
       new Turn(m_hardware, m_robotDrive, turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(backHome))
+      new Drive(m_hardware, m_robotDrive, inches(backHome)),
+      new Turn(m_hardware, m_robotDrive, turnDegrees),
+      new Turn(m_hardware, m_robotDrive, turnDegrees),
+      new Turn(m_hardware, m_robotDrive, turnDegrees)
       );
+      //somehow I changed something, distances seem to have been changed.
     CommandScheduler.getInstance().schedule(commands);
   }
 

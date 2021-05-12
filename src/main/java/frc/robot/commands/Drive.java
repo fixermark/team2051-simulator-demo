@@ -50,6 +50,9 @@ public class Drive extends CommandBase {
         m_drive.stopMotor();
     }
 
+    /**
+     * Signals the Drive Command is completed.
+     */
     @Override public boolean isFinished() {
         return 
         travelDone(m_hardware.leftEncoderCount(), m_targetLeftEncoder) &&

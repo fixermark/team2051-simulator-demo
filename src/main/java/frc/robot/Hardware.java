@@ -56,12 +56,20 @@ public class Hardware {
         return m_leftEncoder.get();
     }
 
+    public CounterBase leftEncoder() {
+        return m_leftEncoder;
+    }
+
     /**
      * Get right encoder count
      * @return right encoder count
      */
     public int rightEncoderCount() {
         return m_rightEncoder.get();
+    }
+
+    public CounterBase rightEncoder() {
+        return m_rightEncoder;
     }
 
     /**

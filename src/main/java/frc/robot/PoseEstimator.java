@@ -1,8 +1,10 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import frc.robot.sensors.RomiGyro;
 
 /**
  * Estimates robot's x, y, and rotational pose on the field from encoder and gyro values
@@ -15,17 +17,17 @@ public class PoseEstimator {
     /**
      * Number of encoder counts per full wheel revolution
      */
-    private static final double ENCODER_TICKS_PER_REVOLUTION = 1440.0;
+    public static final double ENCODER_TICKS_PER_REVOLUTION = 1440.0;
 
     /**
      * Circumference of wheel in meters
      */
-    private static final double WHEEL_CIRCUMFERENCE_METERS = 0.07 * Math.PI;
+    public static final double WHEEL_CIRCUMFERENCE_METERS = 0.07 * Math.PI;
 
     /**
      * Distance per tick
      */
-    private static final double DISTANCE_PER_TICK = WHEEL_CIRCUMFERENCE_METERS / ENCODER_TICKS_PER_REVOLUTION;
+    public static final double DISTANCE_PER_TICK = WHEEL_CIRCUMFERENCE_METERS / ENCODER_TICKS_PER_REVOLUTION;
 
     /**
      * Initialize the pose estimator
@@ -36,24 +38,33 @@ public class PoseEstimator {
         m_lastRightEncoderValue = hardware.rightEncoderCount();
     }
 
+    public void initPose(CounterBase leftEncoder, CounterBase rightEncoder) {
+        m_lastLeftEncoderValue = leftEncoder.get();
+        m_lastRightEncoderValue = rightEncoder.get();
+    }
+
+    public void updatePose(Hardware hardware) {
+        updatePose(hardware.leftEncoder(), hardware.rightEncoder(), hardware.gyro());
+    }
+
     /**
      * Update the pose state based on the current speed controller outputs and time elapsed
      * @param leftMotor Output to left motor
      * @param rightMotor Output to right motor
      */
-    public void updatePose(Hardware hardware) {
+    public void updatePose(CounterBase leftEncoder, CounterBase rightEncoder, RomiGyro gyro) {
         /* Very simplified physics model used below:
          * We assume forward motion is just average of motion of both wheels.
          */ 
-        int leftCount = hardware.leftEncoderCount() - m_lastLeftEncoderValue;
-        int rightCount = hardware.rightEncoderCount() - m_lastRightEncoderValue;
+        int leftCount = leftEncoder.get() - m_lastLeftEncoderValue;
+        int rightCount = rightEncoder.get() - m_lastRightEncoderValue;
 
-        m_lastLeftEncoderValue = hardware.leftEncoderCount();
-        m_lastRightEncoderValue = hardware.rightEncoderCount();
+        m_lastLeftEncoderValue = leftEncoder.get();
+        m_lastRightEncoderValue = rightEncoder.get();
         
         double linear = ((double)(leftCount + rightCount)) / 2.0;
         // note flip in angle: gyro follows left-hand rule
-        double rotation = -hardware.gyro().getAngleZ() * Math.PI / 180.0;
+        double rotation = -gyro.getAngleZ() * Math.PI / 180.0;
 
         /* Now figure out how far the robot went this blip of time.
          * Linear is the distance, but the x- and y-axis distance is figured out by
@@ -75,11 +86,9 @@ public class PoseEstimator {
         
         m_pose = new Pose2d(
             new Translation2d(newX, newY), 
-            Rotation2d.fromDegrees(-hardware.gyro().getAngleZ()));
-
+            Rotation2d.fromDegrees(-gyro.getAngleZ()));
         
-        //tried to add field border here as well
-        
+        //tried to add field border here as well        
     }
 
     /**

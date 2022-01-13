@@ -23,7 +23,7 @@ public class SimpleSimulatedChassis {
     /**
      * Speed at which robot drives forward in meters per second at max velocity
      */
-    private static final double FORWARD_SPEED_MS = 1.0;
+    private static final double FORWARD_SPEED_MS = 2.0;
 
     /**
      * Number of encoder counts per full wheel revolution

@@ -22,7 +22,7 @@ public class Turn extends CommandBase {
     // max acceleration in degrees / sec^2
     private static final double MAX_ACCELERATION = 180.0;
     // When we reach the end of our trajectory, give a bit of time to let the PID control settle
-    private static final double TIME_COMPLETION_SLOP = 0.25;
+    private static final double TIME_COMPLETION_SLOP = .5;
 
     /**
      * Create the command
@@ -41,7 +41,7 @@ public class Turn extends CommandBase {
         double currentGyroZ = m_hardware.gyro().getAngleZ();
         double targetGyroZ = currentGyroZ + m_angle;
         // P, I, D value experimentally determined with 90-degree turns
-        m_controller = new PIDController(0.011, 
+        m_controller = new PIDController(0.11, 
         0.0, 
         0.0);
 

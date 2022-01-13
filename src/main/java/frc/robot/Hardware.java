@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
-import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.sensors.RomiGyro;
 
 /**
@@ -30,13 +30,14 @@ public class Hardware {
     private CounterBase m_rightEncoder = new Encoder(6,7);
 
     public Hardware() {
+        m_rightMotor.setInverted(true);
     }
 
     /**
      * Get the left motor
      * @return reference to left motor
      */
-    public SpeedController leftMotor() {
+    public MotorController leftMotor() {
         return m_leftMotor;
     }
 
@@ -44,7 +45,7 @@ public class Hardware {
      * Get the right motor
      * @return reference to right motor
      */
-    public SpeedController rightMotor() {
+    public MotorController rightMotor() {
         return m_rightMotor;
     }
 

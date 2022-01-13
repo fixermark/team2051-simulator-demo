@@ -1,7 +1,7 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import frc.robot.sensors.RomiGyro;
 
 
@@ -76,12 +76,12 @@ public class SimpleSimulatedChassis {
      * @param leftMotor Output to left motor
      * @param rightMotor Output to right motor
      */
-    public void updateSimulation(SpeedController leftMotor, SpeedController rightMotor) {
+    public void updateSimulation(MotorController leftMotor, MotorController rightMotor) {
         /* Get the power commands sent to the right and left motors.
          * On the ROMI chassis, the right motor is flipped, so invert that input.
          */
         double leftPower = leftMotor.get();
-        double rightPower = -rightMotor.get();
+        double rightPower = rightMotor.get();
 
 
         /* Compute a delta and update m_lastUpdateTime. The delta makes the simulation

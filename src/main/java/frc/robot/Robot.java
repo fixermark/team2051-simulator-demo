@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Turn;
-import frc.robot.commands.Wait;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -111,38 +110,18 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    double startDistance = 60;
-    double startToOne = 150;
-    double starToStar = 120;
-    double passFirstStar = 60;
-    double starToMiddle = 60;
-    double backHome = 220;
-
-    double passStar = 65;
-    double turnDegrees = 105;
+    double distance = 60;
+    double turnDegrees = 90;
     //not sure about why it's not 90
     SequentialCommandGroup commands =  new SequentialCommandGroup(
-      new Drive(m_hardware, m_robotDrive, inches(startDistance)),
+      new Drive(m_hardware, m_robotDrive, inches(distance)),
       new Turn(m_hardware, m_robotDrive, -turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(startToOne)),
-      new Turn(m_hardware, m_robotDrive, turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(passFirstStar)),
-      new Turn(m_hardware, m_robotDrive, turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(starToStar)),
+      new Drive(m_hardware, m_robotDrive, inches(distance)),
       new Turn(m_hardware, m_robotDrive, -turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(passStar)),
+      new Drive(m_hardware, m_robotDrive, inches(distance)),
       new Turn(m_hardware, m_robotDrive, -turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(starToStar)),
-      new Turn(m_hardware, m_robotDrive, turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(passStar)),
-      new Turn(m_hardware, m_robotDrive, turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(starToMiddle)),
-      new Turn(m_hardware, m_robotDrive, turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(backHome)),
-      new Turn(m_hardware, m_robotDrive, turnDegrees),
-      new Turn(m_hardware, m_robotDrive, turnDegrees),
-      new Turn(m_hardware, m_robotDrive, turnDegrees)
-      );
+      new Drive(m_hardware, m_robotDrive, inches(distance)),
+      new Turn(m_hardware, m_robotDrive, -turnDegrees));
       //somehow I changed something, distances seem to have been changed.
     CommandScheduler.getInstance().schedule(commands);
   }

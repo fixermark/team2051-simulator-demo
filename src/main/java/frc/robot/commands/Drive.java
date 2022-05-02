@@ -11,8 +11,8 @@ public class Drive extends CommandBase {
     private Hardware m_hardware;
     private DifferentialDrive m_drive;
     private double m_distance;
-    private int m_targetLeftEncoder;
-    private int m_targetRightEncoder;
+    private double m_targetLeftEncoder;
+    private double m_targetRightEncoder;
     private boolean m_drivingForward;
 
     private static final double MAX_SPEED = 0.7;
@@ -36,8 +36,8 @@ public class Drive extends CommandBase {
     }
 
     @Override public void execute() {
-        int leftEncoder = m_hardware.leftEncoderCount();
-        int rightEncoder = m_hardware.rightEncoderCount();
+        var leftEncoder = m_hardware.leftEncoderCount();
+        var rightEncoder = m_hardware.rightEncoderCount();
 
         double speed = m_drivingForward ? MAX_SPEED : -MAX_SPEED;
 
@@ -64,13 +64,13 @@ public class Drive extends CommandBase {
      * @param distance
      * @return
      */
-    private int distanceToEncoderCounts(double distance) {
+    private double distanceToEncoderCounts(double distance) {
         // distance / circumference is wheel rotations to go
         // then multiply by encoder ticks per rotation to get total encoder ticks
-        return (int)(distance / Hardware.WHEEL_CIRCUMFERENCE_METERS * Hardware.ENCODER_TICKS_PER_REVOLUTION);
+        return distance / Hardware.WHEEL_CIRCUMFERENCE_METERS * Hardware.ENCODER_TICKS_PER_REVOLUTION;
     }
 
-    private boolean travelDone(int currentEncoder, int targetEncoder) {
+    private boolean travelDone(double currentEncoder, double targetEncoder) {
         if (m_drivingForward) {
             return currentEncoder > targetEncoder;
         } else {

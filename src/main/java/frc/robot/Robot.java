@@ -27,7 +27,8 @@ public class Robot extends TimedRobot {
   private final Joystick m_stick = new Joystick(0);
   private Field2d m_field;
   private SimpleSimulatedChassis m_chassis;
-  private PoseEstimator m_pose = new PoseEstimator();
+  private final PoseEstimator m_pose = new PoseEstimator();
+  private DrivetrainMonitor m_drivetrainMonitor;
   private boolean m_realDetermined = false;
   private double m_startupDebounce = 0;
 
@@ -57,6 +58,8 @@ public class Robot extends TimedRobot {
     m_field = new Field2d();
 
     SmartDashboard.putData("Field", m_field);
+
+    m_drivetrainMonitor = new DrivetrainMonitor(m_pose);
   }
 
   /**
@@ -70,10 +73,8 @@ public class Robot extends TimedRobot {
       System.out.println("Robot believes it is talking to real hardware");
     } else {
       System.out.println("Robot believes it is simulated");
-      SimulatedEncoder left = new SimulatedEncoder();
-      SimulatedEncoder right = new SimulatedEncoder();
-      m_hardware.simulateEncoders(left, right);
-      m_chassis = new SimpleSimulatedChassis(m_hardware.gyro(), left, right);
+      
+      m_chassis = new SimpleSimulatedChassis(m_hardware);
     } 
   }
 
@@ -104,7 +105,7 @@ public class Robot extends TimedRobot {
      * Simulate the robot's position based on the current motion
      */
     m_pose.updatePose(m_hardware);
-    m_field.setRobotPose(m_pose.getPose());
+    m_field.setRobotPose(m_pose.get());
   }
 
   /** This function is run once each time the robot enters autonomous mode. */
@@ -126,12 +127,6 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().schedule(commands);
   }
 
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {
-    CommandScheduler.getInstance().run();
-  }
-
   /** This function is called once each time the robot enters teleoperated mode. */
   @Override
   public void teleopInit() {
@@ -151,4 +146,9 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  @Override
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+  }
 }

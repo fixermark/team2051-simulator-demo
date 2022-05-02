@@ -1,10 +1,10 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.CounterBase;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
 import frc.robot.sensors.RomiGyro;
 
 /**
@@ -19,15 +19,15 @@ public class Hardware {
     /**
      * Circumference of wheel in meters
      */
-    public static final double WHEEL_CIRCUMFERENCE_METERS = 0.07 * Math.PI;
+    public static final double WHEEL_CIRCUMFERENCE_METERS = Units.inchesToMeters(4) * Math.PI;
 
 
     private final PWMVictorSPX m_leftMotor = new PWMVictorSPX(0);
     private final PWMVictorSPX m_rightMotor = new PWMVictorSPX(1);
     private final DigitalInput m_realRobot = new DigitalInput(8);
     private final RomiGyro m_gyro = new RomiGyro();
-    private CounterBase m_leftEncoder = new Encoder(4, 5);
-    private CounterBase m_rightEncoder = new Encoder(6,7);
+    private Encoder m_leftEncoder = new Encoder(4, 5);
+    private Encoder m_rightEncoder = new Encoder(6,7);
 
     public Hardware() {
         m_rightMotor.setInverted(true);
@@ -53,26 +53,24 @@ public class Hardware {
      * Get left encoder count
      * @return left encoder count
      */
-    public int leftEncoderCount() {
-        return m_leftEncoder.get();
+    public double leftEncoderCount() {
+        return m_leftEncoder.getDistance();
     }
 
     /**
      * Get right encoder count
      * @return right encoder count
      */
-    public int rightEncoderCount() {
-        return m_rightEncoder.get();
+    public double rightEncoderCount() {
+        return m_rightEncoder.getDistance();
     }
 
-    /**
-     * Set encoders to use simulated encoders instead of real
-     * @param leftEncoder left simulated encoder
-     * @param rightEncoder right simulated encoder
-     */
-    public void simulateEncoders(CounterBase leftEncoder, CounterBase rightEncoder) {
-        m_leftEncoder = leftEncoder;
-        m_rightEncoder = rightEncoder;
+    public Encoder leftEncoder() {
+        return m_leftEncoder;
+    }
+
+    public Encoder rightEncoder() {
+        return m_rightEncoder;
     }
 
     /**

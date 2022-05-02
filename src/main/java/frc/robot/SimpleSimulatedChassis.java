@@ -1,7 +1,9 @@
 package frc.robot;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import frc.robot.sensors.RomiGyro;
 
 
@@ -12,8 +14,8 @@ import frc.robot.sensors.RomiGyro;
  */
 public class SimpleSimulatedChassis {
     private RomiGyro m_gyro;
-    private SimulatedEncoder m_leftEncoder;
-    private SimulatedEncoder m_rightEncoder;
+    private EncoderSim m_leftEncoder;
+    private EncoderSim m_rightEncoder;
     private double m_leftEncoderValue = 0;
     private double m_rightEncoderValue = 0;
     private double m_rotation = 0;
@@ -33,7 +35,7 @@ public class SimpleSimulatedChassis {
     /**
      * Circumference of wheel in meters
      */
-    private static final double WHEEL_CIRCUMFERENCE_METERS = 0.07 * Math.PI;
+    private static final double WHEEL_CIRCUMFERENCE_METERS = Units.inchesToMeters(4) * Math.PI;
 
     /**
      * Ticks per second at full speed
@@ -51,10 +53,10 @@ public class SimpleSimulatedChassis {
 
     private double m_lastUpdateTime;
 
-    public SimpleSimulatedChassis (RomiGyro gyro, SimulatedEncoder leftEncoder, SimulatedEncoder rightEncoder) {
-        m_gyro = gyro;
-        m_leftEncoder = leftEncoder;
-        m_rightEncoder = rightEncoder;
+    public SimpleSimulatedChassis (Hardware hardware) {
+        m_gyro = hardware.gyro();
+        m_leftEncoder = new EncoderSim(hardware.leftEncoder());
+        m_rightEncoder = new EncoderSim(hardware.rightEncoder());
         m_lastUpdateTime = Timer.getFPGATimestamp();
 
        /*
@@ -122,8 +124,8 @@ public class SimpleSimulatedChassis {
 
 
         /* Override encoders wtih simulated value */
-        m_leftEncoder.set((int)m_leftEncoderValue);
-        m_rightEncoder.set((int)m_rightEncoderValue);
+        m_leftEncoder.setDistance(m_leftEncoderValue);
+        m_rightEncoder.setDistance(m_rightEncoderValue);
 
         /* Override read gyro value with simulated value
          * Note: angle on gyro is flipped from right-hand rule; counterclockwise

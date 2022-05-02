@@ -1,15 +1,18 @@
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * Estimates robot's x, y, and rotational pose on the field from encoder and gyro values
  */
-public class PoseEstimator {
-    private int m_lastLeftEncoderValue;
-    private int m_lastRightEncoderValue;
+public class PoseEstimator implements Supplier<Pose2d> {
+    private double m_lastLeftEncoderValue;
+    private double m_lastRightEncoderValue;
     private Pose2d m_pose = new Pose2d();
  
     /**
@@ -20,7 +23,7 @@ public class PoseEstimator {
     /**
      * Circumference of wheel in meters
      */
-    private static final double WHEEL_CIRCUMFERENCE_METERS = 0.07 * Math.PI;
+    private static final double WHEEL_CIRCUMFERENCE_METERS = Units.inchesToMeters(4) * Math.PI;
 
     /**
      * Distance per tick
@@ -45,8 +48,8 @@ public class PoseEstimator {
         /* Very simplified physics model used below:
          * We assume forward motion is just average of motion of both wheels.
          */ 
-        int leftCount = hardware.leftEncoderCount() - m_lastLeftEncoderValue;
-        int rightCount = hardware.rightEncoderCount() - m_lastRightEncoderValue;
+        var leftCount = hardware.leftEncoderCount() - m_lastLeftEncoderValue;
+        var rightCount = hardware.rightEncoderCount() - m_lastRightEncoderValue;
 
         m_lastLeftEncoderValue = hardware.leftEncoderCount();
         m_lastRightEncoderValue = hardware.rightEncoderCount();
@@ -86,7 +89,7 @@ public class PoseEstimator {
      * Get most-recently-calculated pose value
      * @return pose value
      */
-    public Pose2d getPose() {
+    public Pose2d get() {
         return m_pose;
     }
 }

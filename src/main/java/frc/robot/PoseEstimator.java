@@ -13,7 +13,9 @@ import edu.wpi.first.math.util.Units;
 public class PoseEstimator implements Supplier<Pose2d> {
     private double m_lastLeftEncoderValue;
     private double m_lastRightEncoderValue;
-    private Pose2d m_pose = new Pose2d();
+    private Pose2d m_pose = new Pose2d(
+        new Translation2d(7.5, 5), new Rotation2d()
+    );
  
     /**
      * Number of encoder counts per full wheel revolution

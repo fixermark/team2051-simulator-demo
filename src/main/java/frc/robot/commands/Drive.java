@@ -31,8 +31,8 @@ public class Drive extends CommandBase {
     }
 
     @Override public void initialize() {
-        m_targetLeftEncoder = m_hardware.leftEncoderCount() + m_rotations;
-        m_targetRightEncoder = m_hardware.rightEncoderCount() + m_rotations;
+        m_targetLeftEncoder = m_hardware.leftEncoderCount() + m_rotations * Hardware.ENCODER_TICKS_PER_REVOLUTION;
+        m_targetRightEncoder = m_hardware.rightEncoderCount() + m_rotations * Hardware.ENCODER_TICKS_PER_REVOLUTION; 
     }
 
     @Override public void execute() {

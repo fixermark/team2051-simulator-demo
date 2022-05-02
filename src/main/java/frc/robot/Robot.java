@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Drive;
+import frc.robot.commands.LazyTurn;
 import frc.robot.commands.Turn;
 
 /**
@@ -46,10 +47,12 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_startupDebounce = Timer.getFPGATimestamp();
-    var commands = Shuffleboard.getTab("Auto control").getLayout("Commands", BuiltInLayouts.kList);
+    var commands = Shuffleboard.getTab("Auto control").getLayout("Commands", BuiltInLayouts.kList).withSize(1,3);
 
     commands.add("Drive", new Drive(m_hardware, m_robotDrive, 3));
-    commands.add("Turn", new Turn(m_hardware, m_robotDrive, 3));
+    commands.add("Turn", new Turn(m_hardware, m_robotDrive, 72));
+    commands.add("Lazy Turn", new LazyTurn(m_hardware, m_robotDrive, 72));
+
   }
 
   @Override

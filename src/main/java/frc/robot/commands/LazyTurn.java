@@ -4,13 +4,11 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Hardware;
 
-public class Turn extends CommandBase { private Hardware m_hardware;
+public class LazyTurn extends CommandBase { 
+    private Hardware m_hardware;
     private DifferentialDrive m_drive;
     private double m_degrees;
     private double m_targetRotation;
-    private boolean m_drivingForward;
-
-    private static final double MAX_SPEED =1;
 
     /**
      * Create a command
@@ -18,11 +16,10 @@ public class Turn extends CommandBase { private Hardware m_hardware;
      * @param drive Differential drive to control on the robot
      * @param degrees The total distance to go, in degrees
      */
-    public Turn(Hardware hardware, DifferentialDrive drive, double degrees) {
+    public LazyTurn(Hardware hardware, DifferentialDrive drive, double degrees) {
         m_hardware = hardware;
         m_drive = drive;
         m_degrees = degrees;
-        m_drivingForward = degrees > 0;
     }
 
     @Override public void initialize() {
@@ -30,10 +27,8 @@ public class Turn extends CommandBase { private Hardware m_hardware;
     }
 
     @Override public void execute() {
-        double speed = m_drivingForward ? MAX_SPEED : -MAX_SPEED;
-
-        double leftSpeed = travelDone() ? 0 : -speed;
-        double rightSpeed = travelDone() ? 0 : speed;
+        double leftSpeed = travelDone() ? 0 : 0.5;
+        double rightSpeed = travelDone() ? 0 : 1;
         m_drive.tankDrive(leftSpeed, rightSpeed);
     }
 

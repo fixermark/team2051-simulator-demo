@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -43,6 +46,10 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_startupDebounce = Timer.getFPGATimestamp();
+    var commands = Shuffleboard.getTab("Auto control").getLayout("Commands", BuiltInLayouts.kList);
+
+    commands.add("Drive", new Drive(m_hardware, m_robotDrive, 3));
+    commands.add("Turn", new Turn(m_hardware, m_robotDrive, 3));
   }
 
   @Override

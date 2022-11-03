@@ -28,12 +28,12 @@ public class SimpleSimulatedChassis {
     /**
      * Number of encoder counts per full wheel revolution
      */
-    private static final double ENCODER_TICKS_PER_REVOLUTION = 1440.0;
+    public static final double ENCODER_TICKS_PER_REVOLUTION = 1440.0;
 
     /**
      * Circumference of wheel in meters
      */
-    private static final double WHEEL_CIRCUMFERENCE_METERS = 0.07 * Math.PI;
+    public static final double WHEEL_CIRCUMFERENCE_METERS = 0.07 * Math.PI;
 
     /**
      * Ticks per second at full speed

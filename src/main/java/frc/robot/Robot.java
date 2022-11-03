@@ -4,16 +4,23 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Drive;
 import frc.robot.commands.Turn;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,17 +30,13 @@ import frc.robot.commands.Turn;
  */
 public class Robot extends TimedRobot {
   private final Hardware m_hardware = new Hardware();
-  private DifferentialDrive m_robotDrive;
+  private Drivetrain m_drivetrain;
   private final Joystick m_stick = new Joystick(0);
   private Field2d m_field;
   private SimpleSimulatedChassis m_chassis;
   private PoseEstimator m_pose = new PoseEstimator();
   private boolean m_realDetermined = false;
   private double m_startupDebounce = 0;
-
-  public Robot() {
-    m_robotDrive = new DifferentialDrive(m_hardware.leftMotor(), m_hardware.rightMotor());
-  }
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -75,6 +78,7 @@ public class Robot extends TimedRobot {
       m_hardware.simulateEncoders(left, right);
       m_chassis = new SimpleSimulatedChassis(m_hardware.gyro(), left, right);
     } 
+    m_drivetrain = new Drivetrain(m_hardware);
   }
 
   /** For convenience, inches-to-meters conversion */
@@ -110,20 +114,13 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    double distance = 60;
-    double turnDegrees = 90;
-    //not sure about why it's not 90
-    SequentialCommandGroup commands =  new SequentialCommandGroup(
-      new Drive(m_hardware, m_robotDrive, inches(distance)),
-      new Turn(m_hardware, m_robotDrive, -turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(distance)),
-      new Turn(m_hardware, m_robotDrive, -turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(distance)),
-      new Turn(m_hardware, m_robotDrive, -turnDegrees),
-      new Drive(m_hardware, m_robotDrive, inches(distance)),
-      new Turn(m_hardware, m_robotDrive, -turnDegrees));
-      //somehow I changed something, distances seem to have been changed.
-    CommandScheduler.getInstance().schedule(commands);
+    var trajectory = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(0)), 
+      List.of(new Translation2d(1,1), new Translation2d(2, 3)), 
+      new Pose2d(4, 3, new Rotation2d(0)), 
+      m_drivetrain.getTrajectoryConfig());
+    var command = m_drivetrain.followTrajectoryCommand(trajectory);
+    CommandScheduler.getInstance().schedule(command);
   }
 
   /** This function is called periodically during autonomous. */
@@ -141,7 +138,8 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during teleoperated mode. */
   @Override
   public void teleopPeriodic() {
-    m_robotDrive.arcadeDrive(-m_stick.getY(), m_stick.getX());
+    m_drivetrain.drive().arcadeDrive(-m_stick.getY(), m_stick.getX());
+    CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters test mode. */

@@ -4,22 +4,18 @@
 
 package frc.robot;
 
-import java.util.List;
+import java.io.IOException;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Drive;
-import frc.robot.commands.Turn;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -37,6 +33,8 @@ public class Robot extends TimedRobot {
   private PoseEstimator m_pose = new PoseEstimator();
   private boolean m_realDetermined = false;
   private double m_startupDebounce = 0;
+  private static final String FLEXCURVE_FILE = "paths/output/flexcurve.wpilib.json";
+  private Trajectory m_autoTrajectory;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -45,6 +43,13 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_startupDebounce = Timer.getFPGATimestamp();
+    
+    var path = Filesystem.getDeployDirectory().toPath().resolve(FLEXCURVE_FILE);
+    try {
+      m_autoTrajectory = TrajectoryUtil.fromPathweaverJson(path);
+    } catch(IOException e) {
+      DriverStation.reportError("Could not open path file at " + FLEXCURVE_FILE, e.getStackTrace());
+    }
   }
 
   @Override
@@ -114,12 +119,8 @@ public class Robot extends TimedRobot {
   /** This function is run once each time the robot enters autonomous mode. */
   @Override
   public void autonomousInit() {
-    var trajectory = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, new Rotation2d(0)), 
-      List.of(new Translation2d(1,1), new Translation2d(2, 3)), 
-      new Pose2d(4, 3, new Rotation2d(0)), 
-      m_drivetrain.getTrajectoryConfig());
-    var command = m_drivetrain.followTrajectoryCommand(trajectory);
+    
+    var command = m_drivetrain.followTrajectoryCommand(m_autoTrajectory);
     CommandScheduler.getInstance().schedule(command);
   }
 

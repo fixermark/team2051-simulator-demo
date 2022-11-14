@@ -115,6 +115,12 @@ public class Drivetrain extends SubsystemBase {
         return config;
     }
 
+    public void resetOdometry() {
+        m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-m_hardware.gyro().getAngleZ()));
+        m_lastLeftEncoder = m_hardware.leftEncoderCount();
+        m_lastRightEncoder = m_hardware.rightEncoderCount();
+    }
+
     public CommandBase followTrajectoryCommand(Trajectory trajectory) {
        return new RamseteCommand(
             trajectory, 

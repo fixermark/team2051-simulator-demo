@@ -131,4 +131,16 @@ public class SimpleSimulatedChassis {
          */
        m_gyro.simulateAngleZ(m_rotation * -360.0);
     }
+
+    /**
+     * Resets the simulation by setting the heading to 0, zeroing encoders, and setting pose to zero.
+     */
+    public void resetSimulation() {
+        m_gyro.simulateAngleZ(0);
+        m_leftEncoder.set(0);
+        m_rightEncoder.set(0);
+        m_leftEncoderValue = 0;
+        m_rightEncoderValue = 0;
+        m_rotation = 0;
+    }
 }

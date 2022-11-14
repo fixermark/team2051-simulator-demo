@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ReportTrajectory;
 import frc.robot.subsystems.Drivetrain;
 
@@ -35,6 +36,7 @@ public class Robot extends TimedRobot {
   private PoseEstimator m_pose = new PoseEstimator();
   private boolean m_realDetermined = false;
   private double m_startupDebounce = 0;
+  private JoystickButton m_resetButton;
   private static final String FLEXCURVE_FILE = "paths/output/flexcurve.wpilib.json";
   private Trajectory m_autoTrajectory;
 
@@ -52,6 +54,8 @@ public class Robot extends TimedRobot {
     } catch(IOException e) {
       DriverStation.reportError("Could not open path file at " + FLEXCURVE_FILE, e.getStackTrace());
     }
+
+    m_resetButton = new JoystickButton(m_stick, 1);
   }
 
   @Override
@@ -137,6 +141,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CommandScheduler.getInstance().cancelAll();
+    m_resetButton.whenPressed(this::resetPose);
   }
 
   /** This function is called periodically during teleoperated mode. */
@@ -153,4 +158,15 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  public void resetPose() {
+    if (m_chassis != null) {
+      m_chassis.resetSimulation();
+    }
+    if (m_pose != null) {
+      m_pose.resetPose();
+    }
+
+    m_drivetrain.resetOdometry();
+  }
 }

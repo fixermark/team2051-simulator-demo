@@ -89,4 +89,10 @@ public class PoseEstimator {
     public Pose2d getPose() {
         return m_pose;
     }
+
+    public void resetPose() {
+        m_lastLeftEncoderValue = 0;
+        m_lastRightEncoderValue = 0;
+        m_pose = new Pose2d();
+    }
 }

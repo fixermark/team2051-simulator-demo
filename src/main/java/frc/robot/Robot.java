@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import frc.robot.commands.ReportTrajectory;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -121,7 +123,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     
     var command = m_drivetrain.followTrajectoryCommand(m_autoTrajectory);
-    CommandScheduler.getInstance().schedule(command);
+    CommandScheduler.getInstance().schedule(
+      ParallelCommandGroup.parallel(command, new ReportTrajectory(m_autoTrajectory)));
   }
 
   /** This function is called periodically during autonomous. */

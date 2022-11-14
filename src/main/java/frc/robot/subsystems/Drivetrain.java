@@ -40,14 +40,14 @@ public class Drivetrain extends SubsystemBase {
     public static final double MOTOR_KV_VOLT_SEC_PER_M = 1.98;
     public static final double MOTOR_KA_VOLT_SEC2_PER_M = 0.2;
 
-    public static final double MAX_SPEED_M_S = 2;
-    public static final double MAX_ACCEL_M_S2 = 4;
+    public static final double MAX_SPEED_M_S = 0.1;
+    public static final double MAX_ACCEL_M_S2 = 8;
     public static final double TRACK_WIDTH_M = 0.7;
 
     public static final double DRIVE_VEL_P = 8.5;
 
-    public static final double RAMSETE_B = 2;
-    public static final double RAMSETE_ZETA = 0.7;
+    public static final double RAMSETE_B = 2;  // was 2
+    public static final double RAMSETE_ZETA = .7;  // was 0.7
 
     public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(TRACK_WIDTH_M);
 
@@ -80,6 +80,9 @@ public class Drivetrain extends SubsystemBase {
         m_lastTimestamp = curTime;
         m_lastLeftEncoder = leftEncoder;
         m_lastRightEncoder = rightEncoder;
+
+        SmartDashboard.putNumber("leftMotorPower", m_hardware.leftMotor().get());
+        SmartDashboard.putNumber("rightMotorPower",  m_hardware.rightMotor().get());
     }
 
     public DifferentialDrive drive() {

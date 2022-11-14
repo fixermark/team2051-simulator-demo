@@ -5,8 +5,11 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -50,12 +53,33 @@ public class Robot extends TimedRobot {
     
     var path = Filesystem.getDeployDirectory().toPath().resolve(FLEXCURVE_FILE);
     try {
-      m_autoTrajectory = TrajectoryUtil.fromPathweaverJson(path);
+      var loadedTrajectory = TrajectoryUtil.fromPathweaverJson(path);
+      m_autoTrajectory = quinticToCubic(loadedTrajectory);
     } catch(IOException e) {
       DriverStation.reportError("Could not open path file at " + FLEXCURVE_FILE, e.getStackTrace());
     }
 
     m_resetButton = new JoystickButton(m_stick, 1);
+  }
+
+  /** 
+   * Recomputes a quintic trajectory as a cubic one
+   */
+  public Trajectory quinticToCubic(Trajectory quintic) {
+    var startPose = quintic.getInitialPose();
+    var states = quintic.getStates();
+    var endPose = states.get(states.size() - 1).poseMeters;
+
+    var interiorWaypoints = new ArrayList<Translation2d>();
+    
+    for (int i = 1; i < states.size() - 2; i++) {
+      interiorWaypoints.add(states.get(i).poseMeters.getTranslation());
+    }
+
+    System.out.println(states.size());
+
+    var config = Drivetrain.getTrajectoryConfig();
+    return TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, endPose, config);
   }
 
   @Override
@@ -90,11 +114,6 @@ public class Robot extends TimedRobot {
       m_chassis = new SimpleSimulatedChassis(m_hardware.gyro(), left, right);
     } 
     m_drivetrain = new Drivetrain(m_hardware);
-  }
-
-  /** For convenience, inches-to-meters conversion */
-  private double inches(double inches) {
-    return inches * 0.0254 ;  
   }
 
   /**

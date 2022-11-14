@@ -12,7 +12,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -40,8 +39,8 @@ public class Drivetrain extends SubsystemBase {
     public static final double MOTOR_KV_VOLT_SEC_PER_M = 1.98;
     public static final double MOTOR_KA_VOLT_SEC2_PER_M = 0.2;
 
-    public static final double MAX_SPEED_M_S = 0.1;
-    public static final double MAX_ACCEL_M_S2 = 8;
+    public static final double MAX_SPEED_M_S = 1;
+    public static final double MAX_ACCEL_M_S2 = 2;
     public static final double TRACK_WIDTH_M = 0.7;
 
     public static final double DRIVE_VEL_P = 8.5;
@@ -109,7 +108,7 @@ public class Drivetrain extends SubsystemBase {
         m_drive.tankDrive(leftVolts / 12.0, rightVolts / 12.0);
     }
 
-    public TrajectoryConfig getTrajectoryConfig() {
+    public static TrajectoryConfig getTrajectoryConfig() {
         var config = new TrajectoryConfig(MAX_SPEED_M_S, MAX_ACCEL_M_S2);
         config.setKinematics(DRIVE_KINEMATICS);
         return config;

@@ -25,6 +25,7 @@ public class ReportTrajectory extends CommandBase {
         var pose = m_trajectory.sample(m_timer.get());
         SmartDashboard.putNumber("setpointX", pose.poseMeters.getX());
         SmartDashboard.putNumber("setpointY", pose.poseMeters.getY());
+        SmartDashboard.putNumber("setpointHeading", pose.poseMeters.getRotation().getDegrees());
         SmartDashboard.putNumber("setpointVelocity", pose.velocityMetersPerSecond);
         SmartDashboard.putNumber("setpointAcceleration", pose.accelerationMetersPerSecondSq);
     }

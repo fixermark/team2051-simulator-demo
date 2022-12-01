@@ -7,6 +7,8 @@ package frc.robot;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
@@ -21,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.Drive;
 import frc.robot.commands.ReportTrajectory;
 import frc.robot.subsystems.Drivetrain;
 
@@ -54,12 +57,25 @@ public class Robot extends TimedRobot {
     var path = Filesystem.getDeployDirectory().toPath().resolve(FLEXCURVE_FILE);
     try {
       var loadedTrajectory = TrajectoryUtil.fromPathweaverJson(path);
+      double[] points = {2.5, 0.5};
       m_autoTrajectory = quinticToCubic(loadedTrajectory);
+      //m_autoTrajectory = fromPoints(0.0, 0.0, 0.0, 3.0, 3.0, 90.0, points);
     } catch(IOException e) {
       DriverStation.reportError("Could not open path file at " + FLEXCURVE_FILE, e.getStackTrace());
     }
 
     m_resetButton = new JoystickButton(m_stick, 1);
+  }
+
+  public Trajectory fromPoints(double startX, double startY, double startDegrees, double endX, double endY, double endDegrees, double[] points) {
+    var startPose = new Pose2d(startX, startY, Rotation2d.fromDegrees(startDegrees));
+    var endPose = new Pose2d(endX, endY, Rotation2d.fromDegrees(endDegrees));
+    var interiorWaypoints = new ArrayList<Translation2d>();
+
+    for (int i = 0; i < points.length; i += 2) {
+      interiorWaypoints.add(new Translation2d(points[i], points[i + 1]));
+    }
+    return TrajectoryGenerator.generateTrajectory(startPose, interiorWaypoints, endPose, Drivetrain.getTrajectoryConfig());
   }
 
   /** 

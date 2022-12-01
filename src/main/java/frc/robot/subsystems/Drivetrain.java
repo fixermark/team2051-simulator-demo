@@ -43,7 +43,9 @@ public class Drivetrain extends SubsystemBase {
     public static final double MAX_ACCEL_M_S2 = 2;
     public static final double TRACK_WIDTH_M = 0.7;
 
-    public static final double DRIVE_VEL_P = 8.5;
+    public static final double DRIVE_VEL_P = 25;
+    public static final double DRIVE_VEL_D = 0;
+    public static final double DRIVE_VEL_I = 0;
 
     public static final double RAMSETE_B = 2;  // was 2
     public static final double RAMSETE_ZETA = .7;  // was 0.7
@@ -121,15 +123,17 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public CommandBase followTrajectoryCommand(Trajectory trajectory) {
+        var controller = new RamseteController(RAMSETE_B, RAMSETE_ZETA);
+        controller.setEnabled(true);
        return new RamseteCommand(
             trajectory, 
             this::getPose,
-            new RamseteController(RAMSETE_B, RAMSETE_ZETA),
+            controller,
             new SimpleMotorFeedforward(MOTOR_KS_VOLTS, MOTOR_KV_VOLT_SEC_PER_M, MOTOR_KA_VOLT_SEC2_PER_M),
             DRIVE_KINEMATICS,
             this::getWheelSpeeds,
-            new PIDController(DRIVE_VEL_P, 0,0),
-            new PIDController(DRIVE_VEL_P, 0, 0),
+            new PIDController(DRIVE_VEL_P, DRIVE_VEL_I, DRIVE_VEL_D),
+            new PIDController(DRIVE_VEL_P, DRIVE_VEL_I, DRIVE_VEL_D),
             this::tankDriveVolts, this).andThen(() -> tankDriveVolts(0,0));
     
     }
